@@ -1,0 +1,16 @@
+{
+  "name": "piing",
+  "description": "Piing is a fast, minimal reminder service that lets users create one-time alerts with a clean interface and secure account login—making it easy to manage all their reminders in one place.",
+  "scripts": {
+    "dev": "pnpm run -r --parallel --aggregate-output dev",
+    "build": "pnpm run -r build",
+    "start": "pnpm run -r --parallel start",
+    "lint": "pnpm run -r --parallel lint",
+    "format": "pnpm prettier . --write"
+  },
+  "packageManager": "pnpm@10.24.0",
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "typescript": "^5.9.2"
+  }
+}
