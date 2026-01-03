@@ -139,6 +139,7 @@ export default function OTP({
           w-full rounded-md px-4 py-2 text-sm font-medium
           bg-primary text-white hover:bg-primary-hover
           disabled:opacity-50 disabled:cursor-not-allowed
+          cursor-pointer
         "
       >
         Verify
@@ -152,7 +153,7 @@ export default function OTP({
             setTimeout(() => otpRefs.current[0]?.focus(), 0);
             // ... API
           }}
-          className="text-subtle hover:text-text underline underline-offset-4"
+          className="text-subtle hover:text-text underline underline-offset-4 cursor-pointer"
         >
           Resend code
         </button>
@@ -160,7 +161,7 @@ export default function OTP({
         <button
           type="button"
           onClick={onBack}
-          className="text-muted hover:text-text underline underline-offset-4"
+          className="text-muted hover:text-text underline underline-offset-4  cursor-pointer"
         >
           Change email
         </button>

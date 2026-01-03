@@ -83,7 +83,7 @@ export default function SigninPage() {
               <button
                 type="button"
                 onClick={() => setShowPass((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted cursor-pointer"
               >
                 {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -98,7 +98,7 @@ export default function SigninPage() {
 
             <p className="text-sm text-muted text-center">
               Don’t have an account?{" "}
-              <Link to="/signup" className="underline">
+              <Link to="/signup" className="underline hover:text-text">
                 Sign up
               </Link>
             </p>

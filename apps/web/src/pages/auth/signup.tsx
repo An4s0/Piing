@@ -90,7 +90,7 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => setShowPass((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted cursor-pointer"
               >
                 {showPass ? <EyeOff /> : <Eye />}
               </button>
@@ -112,7 +112,7 @@ export default function SignupPage() {
 
             <p className="text-sm text-muted text-center">
               Already have an account?{" "}
-              <Link to="/signin" className="underline">
+              <Link to="/signin" className="underline hover:text-text">
                 Sign in
               </Link>
             </p>
