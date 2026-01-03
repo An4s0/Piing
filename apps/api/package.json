@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@piing/eslint-config": "workspace:*",
+    "@piing/tsconfig": "workspace:*",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "tsup": "^8.5.1",
