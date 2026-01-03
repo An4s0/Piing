@@ -1,0 +1,22 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch app.ts",
+    "build": "tsup app.ts --format esm,cjs --out-dir dist",
+    "start": "node dist/app.js",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@piing/eslint-config": "workspace:*",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1"
+  }
+}
