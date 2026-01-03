@@ -1,7 +1,10 @@
 import { MainLayout } from "@/components/layouts";
 import { Link } from "react-router-dom";
+import { useTitle } from "@/hooks";
 
 export default function HomePage() {
+  useTitle("Piing | Right on time");
+
   return (
     <MainLayout className="flex items-center">
       <div className="mx-auto max-w-2xl px-4 text-center space-y-6">
