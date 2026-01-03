@@ -16,7 +16,6 @@ export function Footer() {
           className="
             text-subtle
             hover:text-text
-            transition-colors
           "
         >
           <GithubIcon className="w-5 h-5" />
