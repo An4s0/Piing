@@ -1,0 +1,10 @@
+{
+  "name": "@piing/tsconfig",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./base.json",
+  "exports": {
+    ".": "./base.json"
+  }
+}
