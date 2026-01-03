@@ -2,14 +2,69 @@
 
 :root {
   --primary: #7c3aed;
+  --primary-hover: #6d28d9;
 
-  color: #120f0d;
-  background-color: #faf9f9;
+  --danger: hsl(0, 84%, 60%);
+  --success: hsl(142, 71%, 45%);
+
+  --bg: hsl(0, 0%, 100%);
+  --bglt: hsl(0, 0%, 98%);
+  --bgltr: hsl(0, 0%, 94%);
+  --card: var(--bglt);
+
+  --text: hsl(0, 0%, 5%);
+  --subtle: hsl(0, 0%, 30%);
+  --muted: hsl(0, 0%, 50%);
+
+  --border: hsl(0, 0%, 80%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color: #f2efed;
-    background-color: #060505;
+    --bg: hsl(0, 0%, 5%);
+    --bglt: hsl(0, 0%, 7%);
+    --bgltr: hsl(0, 0%, 11%);
+    --card: var(--bglt);
+
+    --text: hsl(0, 0%, 95%);
+    --subtle: hsl(0, 0%, 70%);
+    --muted: hsl(0, 0%, 55%);
+
+    --border: hsl(0, 0%, 20%);
   }
+}
+
+@theme {
+  /* Backgrounds */
+  --color-bg: var(--bg);
+  --color-bglt: var(--bglt);
+  --color-bgltr: var(--bgltr);
+  --color-card: var(--card);
+
+  /* Text */
+  --color-text: var(--text);
+  --color-subtle: var(--subtle);
+  --color-muted: var(--muted);
+
+  /* Brand */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-ring: var(--ring);
+
+  /* Borders */
+  --color-border: var(--border);
+
+  /* Status */
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+button {
+  cursor: pointer;
 }
