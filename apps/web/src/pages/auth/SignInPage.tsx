@@ -3,42 +3,42 @@ import { Link } from "react-router-dom";
 import { signinSchema } from "@piing/validation";
 import { useTitle } from "@/hooks";
 import { Eye, EyeOff } from "lucide-react";
-import OTP from "./otp";
+import { OTP } from "@/components/auth";
+import { Input, Button } from "@/components/ui";
+
+type Step = "form" | "otp";
 
 export default function SigninPage() {
   useTitle("Piing | Signin");
 
-  const [step, setStep] = useState<"form" | "otp">("form");
+  const [step, setStep] = useState<Step>("form");
   const [showPass, setShowPass] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [data, setData] = useState({
     email: "",
     password: "",
   });
 
-  function updateField<K extends keyof typeof formData>(
-    key: K,
-    value: (typeof formData)[K]
-  ) {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-  }
+  const update = (k: keyof typeof data) => (v: string) =>
+    setData((p) => ({ ...p, [k]: v }));
 
-  function onSubmitForm(e: React.FormEvent) {
+  function submit(e: React.FormEvent) {
     e.preventDefault();
-    setFormError(null);
+    setError(null);
 
-    const result = signinSchema.safeParse(formData);
+    const result = signinSchema.safeParse(data);
     if (!result.success) {
-      const firstError =
-        result.error.flatten().formErrors[0] ??
-        Object.values(result.error.flatten().fieldErrors)[0]?.[0];
-
-      setFormError(firstError ?? "Invalid credentials");
+      const flat = result.error.flatten();
+      setError(
+        flat.formErrors[0] ??
+          Object.values(flat.fieldErrors)[0]?.[0] ??
+          "Invalid credentials"
+      );
       return;
     }
 
-    // ... API
+    // ... Signin Logic
 
     setStep("otp");
   }
@@ -58,27 +58,23 @@ export default function SigninPage() {
         </div>
 
         {step === "form" ? (
-          <form onSubmit={onSubmitForm} className="space-y-4">
-            {formError && (
-              <div className="text-sm text-danger">{formError}</div>
-            )}
+          <form onSubmit={submit} className="space-y-4">
+            {error && <p className="text-sm text-danger">{error}</p>}
 
-            <input
-              value={formData.email}
-              onChange={(e) => updateField("email", e.target.value)}
+            <Input
+              value={data.email}
+              onChange={(e) => update("email")(e.target.value)}
               placeholder="example@example.com"
               autoComplete="email"
-              className="w-full rounded-md border border-border bg-bg px-3 py-2"
             />
 
             <div className="relative">
-              <input
+              <Input
                 type={showPass ? "text" : "password"}
-                value={formData.password}
-                onChange={(e) => updateField("password", e.target.value)}
+                value={data.password}
+                onChange={(e) => update("password")(e.target.value)}
                 placeholder="Password"
                 autoComplete="current-password"
-                className="w-full rounded-md border border-border bg-bg px-3 py-2 pr-12"
               />
               <button
                 type="button"
@@ -89,12 +85,9 @@ export default function SigninPage() {
               </button>
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-primary text-white rounded-md py-2 hover:bg-primary-hover cursor-pointer"
-            >
+            <Button type="submit" className="w-full">
               Sign in
-            </button>
+            </Button>
 
             <p className="text-sm text-muted text-center">
               Don’t have an account?{" "}
@@ -104,7 +97,7 @@ export default function SigninPage() {
             </p>
           </form>
         ) : (
-          <OTP email={formData.email} onBack={() => setStep("form")} />
+          <OTP email={data.email} onBack={() => setStep("form")} />
         )}
       </div>
     </div>
