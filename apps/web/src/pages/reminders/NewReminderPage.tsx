@@ -15,9 +15,9 @@ export default function NewReminderPage() {
         </div>
 
         <div className="mb-4 rounded-md border border-border bg-bg px-3 py-2 text-xs text-muted">
-          ⏰ The date and time you select will be saved as{" "}
+          ⏰ Enter the date and time in{" "}
           <span className="font-medium text-text">UTC (Global Time)</span>.
-          Notifications will be adjusted automatically for users.
+          <br /> Make sure to convert from your local time if needed.
         </div>
 
         <form className="space-y-4">
