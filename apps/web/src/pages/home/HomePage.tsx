@@ -1,6 +1,7 @@
 import { MainLayout } from "@/components/layouts";
 import { Link } from "react-router-dom";
 import { useTitle } from "@/hooks";
+import { Button } from "@/components/ui";
 
 export default function HomePage() {
   useTitle("Piing | Right on time");
@@ -19,15 +20,8 @@ export default function HomePage() {
         </p>
 
         <div>
-          <Link
-            to={"/reminders/new"}
-            className="
-            px-8 py-3 text-base font-medium rounded-md
-            bg-primary text-white
-            hover:bg-primary-hover
-          "
-          >
-            Set a reminder
+          <Link to="/reminders/new">
+            <Button className="px-8 py-3 text-base">Set a reminder</Button>
           </Link>
         </div>
 
