@@ -68,3 +68,7 @@ body {
 input:focus-visible {
   outline: none;
 }
+
+textarea:focus-visible {
+  outline: none;
+}
