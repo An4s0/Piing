@@ -1,0 +1,13 @@
+export const ValidationErrors = {
+  VALIDATION_ERROR: {
+    code: "VALIDATION_ERROR",
+    message: "Invalid input data.",
+    statusCode: 400,
+  },
+
+  REQUIRED_FIELD_MISSING: {
+    code: "REQUIRED_FIELD_MISSING",
+    message: "A required field is missing.",
+    statusCode: 400,
+  },
+} as const;
