@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "@piing/validation";
-import type { ErrorResponse } from "@/types";
 import {
   UserErrors,
   GlobalErrors,
@@ -29,7 +28,7 @@ const sendError = (
 ) => {
   const e = allErrors[code];
 
-  const response: ErrorResponse = {
+  const response = {
     success: false,
     data: null,
     error: {

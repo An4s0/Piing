@@ -1,19 +1,29 @@
 import dotenvx from "@dotenvx/dotenvx-ops";
-import path from "path";
+import { fileURLToPath } from "url";
 
 dotenvx.config({
-  path: path.resolve(__dirname, "../../.env"),
+  path: fileURLToPath(new URL("../../.env", import.meta.url)),
 });
 
 import express from "express";
 import cors from "cors";
 import routes from "./routes";
+import {
+  ErrorHandler,
+  Logger,
+  RateLimiter,
+  checkContentType,
+} from "./middlewares";
 
 const app = express();
 
+app.use(Logger);
 app.use(cors());
+app.use(checkContentType);
 app.use(express.json());
+app.use(RateLimiter);
 app.use(routes);
+app.use(ErrorHandler);
 
 app.listen(process.env.API_PORT, async () => {
   console.log(
