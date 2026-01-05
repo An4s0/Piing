@@ -9,7 +9,7 @@ import {
   ReminderErrors,
   ValidationErrors,
 } from "@/errors";
-import { normalizeErrors } from "@/utils/normalizeErrors";
+import { normalizeErrors } from "@/utils/normalize-errors";
 
 export const allErrors = {
   ...normalizeErrors(UserErrors),
