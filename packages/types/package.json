@@ -1,0 +1,9 @@
+{
+  "name": "@piing/types",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  }
+}
