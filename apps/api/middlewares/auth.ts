@@ -9,18 +9,30 @@ export const AuthMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    // Validate Authorization header
+    const authHeader = req.headers.authorization;
 
-    if (!token) throw "MISSING_TOKEN";
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw new Error("INVALID_AUTH_HEADER");
+    }
 
-    const decoded = verifyToken(token);
-    if (!decoded) throw "TOKEN_INVALID";
+    const token = authHeader.split(" ")[1];
 
+    // Verify JWT token
+    const decoded = verifyToken(token) as { id: string };
+    if (!decoded?.id) {
+      throw new Error("TOKEN_INVALID");
+    }
+
+    // Fetch user from database
     const user = (await usersService.find({
       id: decoded.id,
     })) as IUser | null;
-    if (!user) throw "USER_NOT_FOUND";
+    if (!user) {
+      throw new Error("USER_NOT_FOUND");
+    }
 
+    // Remove sensitive fields
     const { password, ...userWithoutPassword } = user;
 
     req.user = userWithoutPassword;

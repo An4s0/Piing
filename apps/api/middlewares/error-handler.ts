@@ -47,7 +47,7 @@ export function ErrorHandler(
   res: Response,
   _next: NextFunction
 ) {
-  /* Zod validation */
+  // Zod validation
   if (err instanceof ZodError) {
     const fields: Record<string, string> = {};
 
@@ -59,15 +59,14 @@ export function ErrorHandler(
     return sendError(res, "VALIDATION_ERROR", fields);
   }
 
-  /* Known app errors */
-  if (
-    (typeof err === "string" || err instanceof Error) &&
-    err.toString() in allErrors
-  ) {
-    return sendError(res, err.toString() as KnownErrorKey);
+  // Known errors
+  const errorKey =
+    typeof err === "string" ? err : err instanceof Error ? err.message : null;
+  if (errorKey && errorKey in allErrors) {
+    return sendError(res, errorKey as KnownErrorKey);
   }
 
-  /* Dev logging */
+  // Dev logging
   if (process.env.NODE_ENV === "development") {
     console.error("\x1b[31m✖ Error caught:\x1b[0m", err);
   }

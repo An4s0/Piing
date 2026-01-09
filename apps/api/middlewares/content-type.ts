@@ -5,11 +5,14 @@ export const checkContentType = (
   _res: Response,
   next: NextFunction
 ) => {
-  if (req.method === "GET") return next();
+  // Skip content-type validation
+  if (["GET", "DELETE"].includes(req.method)) {
+    return next();
+  }
 
-  const contentType = req.headers["content-type"];
-  if (!contentType || !contentType.includes("application/json"))
-    throw "INVALID_CONTENT_TYPE";
+  if (!req.is("application/json")) {
+    throw new Error("INVALID_CONTENT_TYPE");
+  }
 
   next();
 };
