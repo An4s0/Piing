@@ -3,6 +3,13 @@ import initTable from "@/init-table";
 import type { IUser } from "@piing/types";
 
 export const usersService = {
+  /**
+   * Find users matching the provided conditions.
+   * If no filter is provided, all users are returned.
+   *
+   * @param where - Partial user fields used for filtering
+   * @returns A single user if one result is found, otherwise an array of users
+   */
   async find(where: Partial<IUser> = {}) {
     await initTable("users");
 
@@ -21,6 +28,12 @@ export const usersService = {
     return rows.length === 1 ? rows[0] : rows;
   },
 
+  /**
+   * Create a new user record.
+   *
+   * @param user - User data required for creation
+   * @returns The created user or null if insertion fails
+   */
   async create(user: Pick<IUser, "name" | "email" | "password">) {
     await initTable("users");
 
