@@ -19,10 +19,13 @@ const app = express();
 
 app.use(Logger);
 app.use(cors());
-app.use(checkContentType);
 app.use(express.json());
+app.use(checkContentType);
 app.use(RateLimiter);
 app.use(routes);
+app.use((_req, _res, next) => {
+  next(new Error("ROUTE_NOT_FOUND"));
+});
 app.use(ErrorHandler);
 
 app.listen(process.env.API_PORT, async () => {
