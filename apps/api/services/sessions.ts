@@ -1,20 +1,43 @@
+import type { ISession } from "@/types";
 import pool from "@/database";
 import initTable from "@/init-table";
-import type { ISession } from "@/types";
 
 export const sessionsService = {
   /**
-   * Find sessions matching given conditions.
-   * If no conditions are provided, all sessions are returned.
+   * Retrieve a single session matching the provided filters.
    *
-   * @param where - Partial session fields used for filtering
-   * @returns A single session if one result is found, otherwise an array of sessions
+   * @param where - Filters to uniquely identify a session.
+   * @throws FIND_ONE_REQUIRES_CONDITION when no filter is provided.
+   * @returns The matched session, or null if none is found.
    */
-  async find(where: Partial<ISession> = {}) {
+  async findOne(where: Partial<ISession>): Promise<ISession | null> {
     await initTable("sessions");
 
-    // cleanup expired sessions
-    await pool.query(`DELETE FROM sessions WHERE expires_at < NOW()`);
+    const keys = Object.keys(where);
+    const values = Object.values(where);
+
+    if (keys.length === 0) {
+      throw new Error("FIND_ONE_REQUIRES_CONDITION");
+    }
+
+    const sql = `
+      SELECT * FROM sessions
+      WHERE ${keys.map((k, i) => `"${k}" = $${i + 1}`).join(" AND ")}
+      LIMIT 1
+    `;
+
+    const { rows } = await pool.query<ISession>(sql, values);
+    return rows[0] ?? null;
+  },
+
+  /**
+   * Retrieve multiple sessions matching the provided filters.
+   *
+   * @param where - Optional filters to match session fields.
+   * @returns An array of sessions. Empty if no sessions are found.
+   */
+  async findMany(where: Partial<ISession> = {}): Promise<ISession[]> {
+    await initTable("sessions");
 
     const keys = Object.keys(where);
     const values = Object.values(where);
@@ -27,54 +50,59 @@ export const sessionsService = {
             .join(" AND ")}`;
 
     const { rows } = await pool.query<ISession>(sql, values);
-
-    return rows.length === 1 ? rows[0] : rows;
+    return rows;
   },
 
   /**
    * Create a new session record.
    *
-   * @param data - Session data excluding auto-generated fields
-   * @returns The created session or null if insertion fails
+   * @param data - Session fields required for creation.
+   * @returns The newly created session.
    */
-  async create(data: Omit<ISession, "id" | "created_at">) {
+  async create(
+    data: Pick<ISession, "user_id" | "token" | "expires_at">
+  ): Promise<ISession> {
     await initTable("sessions");
 
     const { rows } = await pool.query<ISession>(
-      `INSERT INTO sessions (user_id, token, expires_at)
-       VALUES ($1, $2, $3)
-       RETURNING *`,
+      `
+      INSERT INTO sessions (user_id, token, expires_at)
+      VALUES ($1, $2, $3)
+      RETURNING *
+      `,
       [data.user_id, data.token, data.expires_at]
     );
 
-    return rows[0] ?? null;
+    return rows[0];
   },
 
   /**
-   * Update an existing session by its ID.
+   * Update an existing session by ID.
    *
-   * @param id - Session unique identifier
-   * @param data - Partial session fields to update
-   * @returns The updated session or null if no fields were provided
-   * @throws SESSION_ID_REQUIRED when id is missing
+   * @param id - Session ID.
+   * @param updates - Fields to update (excluding immutable fields).
+   * @returns The updated session, or null if no update occurred.
    */
-  async update(id: string, data: Partial<ISession>) {
-    if (!id) throw new Error("SESSION_ID_REQUIRED");
-
+  async update(
+    id: string,
+    updates: Partial<Omit<ISession, "id" | "created_at">>
+  ): Promise<ISession | null> {
     await initTable("sessions");
 
-    const keys = Object.keys(data);
+    const keys = Object.keys(updates);
+    const values = Object.values(updates);
+
     if (keys.length === 0) return null;
 
-    const values = Object.values(data);
-
-    const set = keys.map((k, i) => `"${k}" = $${i + 1}`).join(", ");
+    const setClause = keys.map((k, i) => `"${k}" = $${i + 1}`).join(", ");
 
     const { rows } = await pool.query<ISession>(
-      `UPDATE sessions
-       SET ${set}
-       WHERE id = $${values.length + 1}
-       RETURNING *`,
+      `
+      UPDATE sessions
+      SET ${setClause}
+      WHERE id = $${keys.length + 1}
+      RETURNING *
+      `,
       [...values, id]
     );
 
@@ -82,22 +110,34 @@ export const sessionsService = {
   },
 
   /**
-   * Delete a session by its ID.
+   * Permanently delete a session by ID.
    *
-   * @param id - Session unique identifier
-   * @throws SESSION_ID_REQUIRED when id is missing
-   * @throws SESSION_NOT_FOUND when session does not exist
+   * @param id - Session ID.
+   * @returns True if the session was deleted, false otherwise.
    */
-  async delete(id: string) {
-    if (!id) throw new Error("SESSION_ID_REQUIRED");
-
+  async delete(id: string): Promise<boolean> {
     await initTable("sessions");
 
     const { rowCount } = await pool.query(
-      `DELETE FROM sessions WHERE id = $1`,
+      "DELETE FROM sessions WHERE id = $1",
       [id]
     );
 
-    if (!rowCount) throw new Error("SESSION_NOT_FOUND");
+    return rowCount === 1;
+  },
+
+  /**
+   * Delete all expired sessions from the database.
+   *
+   * @returns Number of deleted sessions.
+   */
+  async cleanupExpired(): Promise<number> {
+    await initTable("sessions");
+
+    const { rowCount } = await pool.query(
+      "DELETE FROM sessions WHERE expires_at < NOW()"
+    );
+
+    return rowCount ?? 0;
   },
 };
