@@ -18,4 +18,14 @@ export const GlobalErrors = {
     message: "Too many requests. Please try again later.",
     statusCode: 429,
   },
+
+  VALIDATION_ERROR: {
+    message: "Invalid input data.",
+    statusCode: 400,
+  },
+
+  FIND_ONE_REQUIRES_CONDITION: {
+    message: "At least one condition must be provided to find a single record.",
+    statusCode: 400,
+  },
 } as const;
