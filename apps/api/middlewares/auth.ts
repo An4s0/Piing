@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import { verifyToken } from "@/utils/jwt";
 import { usersService } from "@/services";
-import type { IUser } from "@piing/types";
+import { verifyToken } from "@/utils/jwt";
 
 export const AuthMiddleware = async (
   req: Request,
@@ -9,33 +8,38 @@ export const AuthMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    // Validate Authorization header
+    // Validate Authorization header and extract Bearer token
     const authHeader = req.headers.authorization;
 
-    if (!authHeader?.startsWith("Bearer ")) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new Error("INVALID_AUTH_HEADER");
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = authHeader.slice(7).trim();
+    if (!token) {
+      throw new Error("TOKEN_INVALID");
+    }
 
-    // Verify JWT token
-    const decoded = verifyToken(token) as { id: string };
+    // Verify and decode JWT token
+    const decoded = verifyToken(token) as { id?: string };
+
     if (!decoded?.id) {
       throw new Error("TOKEN_INVALID");
     }
 
-    // Fetch user from database
-    const user = (await usersService.find({
+    // Retrieve authenticated user from database
+    const user = await usersService.findOne({
       id: decoded.id,
-    })) as IUser | null;
+    });
+
     if (!user) {
       throw new Error("USER_NOT_FOUND");
     }
 
-    // Remove sensitive fields
-    const { password, ...userWithoutPassword } = user;
+    // Remove sensitive fields before attaching user to request
+    const { password_hash, ...safeUser } = user;
 
-    req.user = userWithoutPassword;
+    req.user = safeUser;
     next();
   } catch (error) {
     next(error);

@@ -34,7 +34,7 @@ export const RateLimiter = (
   // Allow request if under limit
   if (rateLimitData.count < MAX_REQUESTS) {
     rateLimitData.count++;
-    next();
+    return next();
   }
 
   throw new Error("TOO_MANY_REQUESTS");

@@ -10,7 +10,7 @@ export const Logger = (req: Request, res: Response, next: NextFunction) => {
         ? "\x1b[92m✓\x1b[0m"
         : res.statusCode < 500
         ? "\x1b[93m!\x1b[0m"
-        : "\x1b[31m✖\x1b[0m";
+        : "\x1b[31mX\x1b[0m";
 
     if (process.env.NODE_ENV === "development") {
       console.log(

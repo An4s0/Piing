@@ -1,22 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "@piing/validation";
-import {
-  UserErrors,
-  GlobalErrors,
-  AuthErrors,
-  SessionErrors,
-  ReminderErrors,
-  ValidationErrors,
-} from "@/errors";
 import { normalizeErrors } from "@/utils/normalize-errors";
+import { UserErrors, GlobalErrors, AuthErrors, SessionErrors } from "@/errors";
 
 export const allErrors = {
   ...normalizeErrors(UserErrors),
   ...normalizeErrors(GlobalErrors),
   ...normalizeErrors(AuthErrors),
   ...normalizeErrors(SessionErrors),
-  ...normalizeErrors(ReminderErrors),
-  ...normalizeErrors(ValidationErrors),
 } as const;
 
 type KnownErrorKey = keyof typeof allErrors;
@@ -68,7 +59,7 @@ export function ErrorHandler(
 
   // Dev logging
   if (process.env.NODE_ENV === "development") {
-    console.error("\x1b[31m✖ Error caught:\x1b[0m", err);
+    console.error("\x1b[31mX Error caught:\x1b[0m", err);
   }
 
   return sendError(res, "INTERNAL_SERVER_ERROR");
