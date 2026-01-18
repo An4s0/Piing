@@ -5,7 +5,7 @@ import { verifyToken } from "@/utils/jwt";
 export const AuthMiddleware = async (
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     // Validate Authorization header and extract Bearer token
@@ -40,6 +40,7 @@ export const AuthMiddleware = async (
     const { password_hash, ...safeUser } = user;
 
     req.user = safeUser;
+    req.token = token;
     next();
   } catch (error) {
     next(error);
