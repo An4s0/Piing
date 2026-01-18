@@ -4,6 +4,11 @@ export const UserErrors = {
     statusCode: 404,
   },
 
+  INVALID_CREDENTIALS: {
+    message: "Invalid email or password.",
+    statusCode: 401,
+  },
+
   EMAIL_ALREADY_EXISTS: {
     message: "Email already exists.",
     statusCode: 409,
