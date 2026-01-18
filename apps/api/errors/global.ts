@@ -23,9 +23,4 @@ export const GlobalErrors = {
     message: "Invalid input data.",
     statusCode: 400,
   },
-
-  FIND_ONE_REQUIRES_CONDITION: {
-    message: "At least one condition must be provided to find a single record.",
-    statusCode: 400,
-  },
 } as const;
