@@ -37,7 +37,7 @@ router.put("/:id", async (req, res, next) => {
     };
 
     const updatedReminder = await remindersService.update(reminderId, updates);
-    if (!reminder) {
+    if (!updatedReminder) {
       throw new Error("REMINDER_UPDATE_FAILED");
     }
 

@@ -11,4 +11,7 @@ router.use("/", AuthMiddleware, getRemindersRoute);
 import updateReminderRoute from "./update";
 router.use("/", AuthMiddleware, updateReminderRoute);
 
+import deleteReminderRoute from "./delete";
+router.use("/", AuthMiddleware, deleteReminderRoute);
+
 export default router;
