@@ -8,8 +8,6 @@ export const updateReminderSchema = z.object({
   description: z.string().trim().max(500).nullable().optional(),
 
   scheduled_at: scheduledAtSchema.optional(),
-
-  completed: z.boolean().optional(),
 });
 
 export type UpdateReminderInput = z.infer<typeof updateReminderSchema>;

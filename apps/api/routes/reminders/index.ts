@@ -8,4 +8,7 @@ router.use("/", AuthMiddleware, createReminderRoute);
 import getRemindersRoute from "./get";
 router.use("/", AuthMiddleware, getRemindersRoute);
 
+import updateReminderRoute from "./update";
+router.use("/", AuthMiddleware, updateReminderRoute);
+
 export default router;
