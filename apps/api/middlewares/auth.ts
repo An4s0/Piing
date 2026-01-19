@@ -33,7 +33,7 @@ export const AuthMiddleware = async (
     });
 
     if (!user) {
-      throw new Error("USER_NOT_FOUND");
+      throw new Error("INVALID_CREDENTIALS");
     }
 
     // Remove sensitive fields before attaching user to request

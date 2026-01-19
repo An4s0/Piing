@@ -1,13 +1,22 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "@piing/validation";
 import { normalizeErrors } from "@/utils/normalize-errors";
-import { UserErrors, GlobalErrors, AuthErrors, SessionErrors } from "@/errors";
+import {
+  UserErrors,
+  GlobalErrors,
+  AuthErrors,
+  SessionErrors,
+  OTPErrors,
+  DatabaseErrors,
+} from "@/errors";
 
 export const allErrors = {
   ...normalizeErrors(UserErrors),
   ...normalizeErrors(GlobalErrors),
   ...normalizeErrors(AuthErrors),
   ...normalizeErrors(SessionErrors),
+  ...normalizeErrors(OTPErrors),
+  ...normalizeErrors(DatabaseErrors),
 } as const;
 
 type KnownErrorKey = keyof typeof allErrors;
@@ -15,7 +24,7 @@ type KnownErrorKey = keyof typeof allErrors;
 const sendError = (
   res: Response,
   code: KnownErrorKey,
-  fields?: Record<string, string>
+  fields?: Record<string, string>,
 ) => {
   const e = allErrors[code];
 
@@ -36,7 +45,7 @@ export function ErrorHandler(
   err: unknown,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) {
   // Zod validation
   if (err instanceof ZodError) {

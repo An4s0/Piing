@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { signinSchema } from "@piing/validation";
 import { usersService, otpsService } from "@/services";
 import { sendOtp } from "@/utils/send-otp";
-import type { ApiResponse } from "@/types";
+import type { ApiResponse } from "@piing/types";
 import type { IUser } from "@piing/types";
 
 const router: Router = Router();
@@ -21,7 +21,7 @@ router.post("/", async (req, res, next) => {
       email: email.toLowerCase(),
     })) as IUser;
     if (!user) {
-      throw new Error("USER_NOT_FOUND");
+      throw new Error("INVALID_CREDENTIALS");
     }
 
     const isValid = await bcrypt.compare(password, user.password_hash!);

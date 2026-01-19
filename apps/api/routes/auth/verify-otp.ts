@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { usersService, sessionsService, otpsService } from "@/services";
+import { usersService, otpsService } from "@/services";
 import { generateToken } from "@/utils/jwt";
 import type { IUser } from "@piing/types";
-import type { ISession, ApiResponse } from "@/types";
+import type { ApiResponse } from "@piing/types";
 import { verifyOtpSchema } from "@piing/validation";
 
 const router: Router = Router();
@@ -33,12 +33,6 @@ router.post("/", async (req, res, next) => {
       id: user_id,
     });
 
-    const session = await sessionsService.create({
-      user_id: user_id,
-      token,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-    });
-
     let user = (await usersService.update(user_id, {
       is_verified: true,
     })) as IUser;
@@ -49,12 +43,11 @@ router.post("/", async (req, res, next) => {
       data: {
         user: safeUser,
         token,
-        session,
       },
       error: null,
-    } satisfies ApiResponse<{ user: IUser; token: string; session: ISession }>);
-  } catch (err) {
-    next(err);
+    } satisfies ApiResponse<{ user: IUser; token: string }>);
+  } catch (error) {
+    next(error);
   }
 });
 

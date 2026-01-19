@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { sessionsService } from "@/services";
-import type { ApiResponse } from "@/types";
+import type { ApiResponse } from "@piing/types";
 
 const router: Router = Router();
 

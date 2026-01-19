@@ -1,6 +1,6 @@
 export const OTPErrors = {
   OTP_NOT_FOUND: {
-    message: "OTP not found.",
+    message: "The verification code is invalid or has expired.",
     statusCode: 404,
   },
 

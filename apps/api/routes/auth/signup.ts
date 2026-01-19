@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { signupSchema } from "@piing/validation";
 import { usersService, otpsService } from "@/services";
 import { sendOtp } from "@/utils/send-otp";
-import type { ApiResponse } from "@/types";
+import type { ApiResponse } from "@piing/types";
 import type { IUser } from "@piing/types";
 
 const router: Router = Router();

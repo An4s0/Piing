@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { sessionsService } from "@/services";
-import type { ApiResponse, ISession } from "@/types";
+import type { ApiResponse } from "@piing/types";
 import type { IUser } from "@piing/types";
 
 const router: Router = Router();
@@ -17,10 +17,9 @@ router.get("/", async (req, res, next) => {
       data: {
         user: req.user as IUser,
         token: req.token as string,
-        session,
       },
       error: null,
-    } satisfies ApiResponse<{ user: IUser; token: string; session: ISession }>);
+    } satisfies ApiResponse<{ user: IUser; token: string }>);
   } catch (error) {
     next(error);
   }
