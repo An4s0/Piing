@@ -29,9 +29,9 @@ export default function SigninPage() {
     e.preventDefault();
     setError(null);
 
-    const result = signinSchema.safeParse(data);
-    if (!result.success) {
-      const flat = result.error.flatten();
+    const validationResult = signinSchema.safeParse(data);
+    if (!validationResult.success) {
+      const flat = validationResult.error.flatten();
       setError(
         flat.formErrors[0] ??
           Object.values(flat.fieldErrors)[0]?.[0] ??
@@ -40,14 +40,14 @@ export default function SigninPage() {
       return;
     }
 
-    const resultS = await auth.signin(data);
+    const result = await auth.signin(data);
 
-    if (!resultS.success) {
-      setError(resultS.error.message);
+    if (!result.success) {
+      setError(result.error.message);
       return;
     }
 
-    setUserID(resultS.data.user.id);
+    setUserID(result.data.user.id);
     setStep("otp");
   }
 

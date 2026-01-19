@@ -31,9 +31,9 @@ export default function SignupPage() {
     e.preventDefault();
     setError(null);
 
-    const result = signupSchema.safeParse(data);
-    if (!result.success) {
-      const flat = result.error.flatten();
+    const validationResult = signupSchema.safeParse(data);
+    if (!validationResult.success) {
+      const flat = validationResult.error.flatten();
       setError(
         flat.formErrors[0] ??
           Object.values(flat.fieldErrors)[0]?.[0] ??
@@ -42,14 +42,14 @@ export default function SignupPage() {
       return;
     }
 
-    const resultS = await auth.signup(data);
+    const result = await auth.signup(data);
 
-    if (!resultS.success) {
-      setError(resultS.error.message);
+    if (!result.success) {
+      setError(result.error.message);
       return;
     }
 
-    setUserID(resultS.data.user.id);
+    setUserID(result.data.user.id);
     setStep("otp");
   }
 

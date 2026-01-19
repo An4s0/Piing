@@ -89,22 +89,22 @@ export function OTP({
     setError(null);
 
     const code = otp.join("");
-    const result = otpSchema.safeParse({ code });
+    const validationResult = otpSchema.safeParse({ code });
 
-    if (!result.success) {
+    if (!validationResult.success) {
       setError("Please enter the 6-digit code.");
       return;
     }
 
-    const resultV = await auth.verifyOtp({ code, user_id });
+    const result = await auth.verifyOtp({ code, user_id });
 
-    if (!resultV.success) {
-      setError(resultV.error.message);
+    if (!result.success) {
+      setError(result.error.message);
       return;
     }
 
-    storageUser.set(resultV.data.user);
-    cookies.set("token", resultV.data.token);
+    storageUser.set(result.data.user);
+    cookies.set("token", result.data.token);
     window.location.href = "/";
   }
 
