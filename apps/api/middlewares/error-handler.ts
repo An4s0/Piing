@@ -8,6 +8,7 @@ import {
   SessionErrors,
   OTPErrors,
   DatabaseErrors,
+  ReminderErrors,
 } from "@/errors";
 
 export const allErrors = {
@@ -17,6 +18,7 @@ export const allErrors = {
   ...normalizeErrors(SessionErrors),
   ...normalizeErrors(OTPErrors),
   ...normalizeErrors(DatabaseErrors),
+  ...normalizeErrors(ReminderErrors),
 } as const;
 
 type KnownErrorKey = keyof typeof allErrors;

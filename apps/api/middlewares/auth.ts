@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { usersService } from "@/services";
+import { usersService, sessionsService } from "@/services";
 import { verifyToken } from "@/utils/jwt";
 
 export const AuthMiddleware = async (
@@ -18,6 +18,11 @@ export const AuthMiddleware = async (
     const token = authHeader.slice(7).trim();
     if (!token) {
       throw new Error("TOKEN_INVALID");
+    }
+
+    const session = await sessionsService.findOne({ token });
+    if (!session) {
+      throw new Error("SESSION_NOT_FOUND");
     }
 
     // Verify and decode JWT token

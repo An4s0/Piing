@@ -14,7 +14,7 @@ router.post("/", async (req, res, next) => {
       throw parseResult.error;
     }
 
-    const { user_id, code } = req.body;
+    const { user_id, code } = parseResult.data;
 
     const otp = await otpsService.findOne({
       user_id,

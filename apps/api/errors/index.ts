@@ -4,3 +4,4 @@ export * from "./auth";
 export * from "./session";
 export * from "./otp";
 export * from "./database";
+export * from "./reminder";

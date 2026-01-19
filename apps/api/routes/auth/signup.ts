@@ -15,7 +15,7 @@ router.post("/", async (req, res, next) => {
       throw parseResult.error;
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password } = parseResult.data;
 
     const existingUser = await usersService.findOne({
       email: email.toLowerCase(),

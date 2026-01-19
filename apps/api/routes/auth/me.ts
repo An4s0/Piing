@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { sessionsService } from "@/services";
 import type { ApiResponse } from "@piing/types";
 import type { IUser } from "@piing/types";
 
@@ -7,11 +6,6 @@ const router: Router = Router();
 
 router.get("/", async (req, res, next) => {
   try {
-    const session = await sessionsService.findOne({ token: req.token });
-    if (!session) {
-      throw new Error("SESSION_NOT_FOUND");
-    }
-
     res.status(201).json({
       success: true,
       data: {
