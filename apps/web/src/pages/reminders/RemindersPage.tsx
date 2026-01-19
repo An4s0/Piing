@@ -1,56 +1,32 @@
+import { useEffect, useState, useRef } from "react";
 import { MainLayout } from "@/components/layouts";
 import { useTitle } from "@/hooks";
 import { Link } from "react-router-dom";
 import { Plus, Clock, Trash2, CheckCircle2, Circle } from "lucide-react";
 import { Button } from "@/components/ui";
-
-type Reminder = {
-  id: string;
-  title: string;
-  description: string;
-  time: string;
-  date: string;
-  completed: boolean;
-};
-
-const REMINDERS: Reminder[] = [
-  // Sample
-  {
-    id: "1",
-    title: "Project deadline",
-    description: "Submit final presentation to team",
-    time: "6:00 PM",
-    date: "Today",
-    completed: false,
-  },
-  {
-    id: "2",
-    title: "Pay internet bill",
-    description: "Monthly payment due",
-    time: "9:00 AM",
-    date: "Tomorrow",
-    completed: false,
-  },
-  {
-    id: "3",
-    title: "Doctor appointment",
-    description: "Annual checkup",
-    time: "4:30 PM",
-    date: "Yesterday",
-    completed: true,
-  },
-  {
-    id: "4",
-    title: "Team meeting",
-    description: "Weekly sync",
-    time: "2:00 PM",
-    date: "Friday",
-    completed: false,
-  },
-];
+import type { IReminder } from "@piing/types";
+import { reminders } from "@/utils/reminders";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function RemindersPage() {
   useTitle("Piing | Reminders");
+  const { token } = useAuth();
+  const fetchedRef = useRef(false);
+
+  const [REMINDERS, setREMINDERS] = useState<IReminder[]>([]);
+
+  useEffect(() => {
+    if (!token || fetchedRef.current) return;
+    fetchedRef.current = true;
+
+    const fetchReminders = async () => {
+      const response = await reminders.get(token);
+      if (response.error) return;
+      setREMINDERS(response.data?.reminders ?? []);
+    };
+
+    fetchReminders();
+  }, [token]);
 
   const upcoming = REMINDERS.filter((r) => !r.completed);
   const past = REMINDERS.filter((r) => r.completed);
@@ -116,9 +92,27 @@ function ReminderCard({
   reminder,
   isPast = false,
 }: {
-  reminder: Reminder;
+  reminder: IReminder;
   isPast?: boolean;
 }) {
+  function formatScheduledAt(value: string | Date) {
+    const d = new Date(value);
+
+    const date = d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+
+    const time = d.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+
+    return `${date} · ${time}`;
+  }
+
   return (
     <div
       className={`group relative rounded-xl bg-bglt p-5 border border-border hover:shadow-lg ${
@@ -135,7 +129,7 @@ function ReminderCard({
 
       <div className="inline-flex items-center bg-bgltr text-subtle gap-1.5 rounded-full px-3 py-1 text-xs font-medium mb-3">
         <Clock className="h-3 w-3" />
-        {reminder.date} · {reminder.time}
+        {formatScheduledAt(reminder.scheduled_at)}
       </div>
 
       <div className="space-y-2 mb-4">
