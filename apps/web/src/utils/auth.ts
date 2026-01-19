@@ -56,4 +56,19 @@ export const auth = {
     }>;
     return result;
   },
+
+  async me(token: string) {
+    const response = await fetch(import.meta.env.VITE_API_URL + "/auth/me", {
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = (await response.json()) as ApiResponse<{
+      user: IUser;
+      token: string;
+    }>;
+    return result;
+  },
 };
