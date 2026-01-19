@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { usersService, otpsService } from "@/services";
+import { usersService, otpsService, sessionsService } from "@/services";
 import { generateToken } from "@/utils/jwt";
 import type { IUser } from "@piing/types";
 import type { ApiResponse } from "@piing/types";
@@ -32,6 +32,15 @@ router.post("/", async (req, res, next) => {
     const token = generateToken({
       id: user_id,
     });
+
+    const session = await sessionsService.create({
+      user_id,
+      token,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+    if (!session) {
+      throw new Error("SESSION_CREATION_FAILED");
+    }
 
     let user = (await usersService.update(user_id, {
       is_verified: true,
