@@ -5,4 +5,7 @@ const router = Router();
 import createReminderRoute from "./create";
 router.use("/", AuthMiddleware, createReminderRoute);
 
+import getRemindersRoute from "./get";
+router.use("/", AuthMiddleware, getRemindersRoute);
+
 export default router;
