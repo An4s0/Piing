@@ -5,6 +5,7 @@ import { useTitle } from "@/hooks";
 import { Eye, EyeOff } from "lucide-react";
 import { OTP } from "@/components/auth";
 import { Input, Button } from "@/components/ui";
+import { auth } from "@/utils/auth";
 
 type Step = "form" | "otp";
 
@@ -14,6 +15,7 @@ export default function SignupPage() {
   const [step, setStep] = useState<Step>("form");
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userID, setUserID] = useState<string | null>(null);
 
   const [data, setData] = useState({
     name: "",
@@ -25,7 +27,7 @@ export default function SignupPage() {
   const update = (k: keyof typeof data) => (v: string) =>
     setData((p) => ({ ...p, [k]: v }));
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
@@ -35,13 +37,19 @@ export default function SignupPage() {
       setError(
         flat.formErrors[0] ??
           Object.values(flat.fieldErrors)[0]?.[0] ??
-          "Invalid form data"
+          "Invalid form data",
       );
       return;
     }
 
-    // ... Signup Logic
+    const resultS = await auth.signup(data);
 
+    if (!resultS.success) {
+      setError(resultS.error.message);
+      return;
+    }
+
+    setUserID(resultS.data.user.id);
     setStep("otp");
   }
 
@@ -113,7 +121,11 @@ export default function SignupPage() {
             </p>
           </form>
         ) : (
-          <OTP email={data.email} onBack={() => setStep("form")} />
+          <OTP
+            email={data.email}
+            user_id={userID!}
+            onBack={() => setStep("form")}
+          />
         )}
       </div>
     </div>

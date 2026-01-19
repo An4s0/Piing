@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui";
+import { storageUser } from "@/utils/storage";
 
 export function Header() {
+  const user = storageUser.get();
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg">
       <div className="mx-auto max-w-5xl h-16 px-4 flex items-center justify-between">
@@ -12,8 +15,8 @@ export function Header() {
           </span>
         </Link>
 
-        <Link to={"/signup"}>
-          <Button>Sign up</Button>
+        <Link to={user ? "/reminders" : "/signup"}>
+          <Button>{user ? "Reminders" : "Sign up"}</Button>
         </Link>
       </div>
     </header>

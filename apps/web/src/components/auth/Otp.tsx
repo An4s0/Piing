@@ -1,10 +1,21 @@
 import { useRef, useState } from "react";
 import { otpSchema } from "@piing/validation";
 import { Button } from "@/components/ui";
+import { auth } from "@/utils/auth";
+import { cookies } from "@/utils/cookies";
+import { storageUser } from "@/utils/storage";
 
 const OTP_LENGTH = 6;
 
-export function OTP({ email, onBack }: { email: string; onBack: () => void }) {
+export function OTP({
+  email,
+  user_id,
+  onBack,
+}: {
+  email: string;
+  user_id: string;
+  onBack: () => void;
+}) {
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState<string | null>(null);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
@@ -73,7 +84,7 @@ export function OTP({ email, onBack }: { email: string; onBack: () => void }) {
     focus(digits.length - 1);
   }
 
-  function onVerify(e: React.FormEvent) {
+  async function onVerify(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
@@ -85,9 +96,16 @@ export function OTP({ email, onBack }: { email: string; onBack: () => void }) {
       return;
     }
 
-    // ... Verify Logic
+    const resultV = await auth.verifyOtp({ code, user_id });
 
-    alert(code);
+    if (!resultV.success) {
+      setError(resultV.error.message);
+      return;
+    }
+
+    storageUser.set(resultV.data.user);
+    cookies.set("token", resultV.data.token);
+    window.location.href = "/";
   }
 
   const complete = otp.every(Boolean);
@@ -131,19 +149,7 @@ export function OTP({ email, onBack }: { email: string; onBack: () => void }) {
         Verify
       </Button>
 
-      <div className="flex items-center justify-between text-sm">
-        <button
-          type="button"
-          onClick={() => {
-            setOtp(Array(OTP_LENGTH).fill(""));
-            focus(0);
-            // ... Resend Logic
-          }}
-          className="text-subtle hover:text-text underline underline-offset-4 cursor-pointer"
-        >
-          Resend code
-        </button>
-
+      <div className="flex items-center justify-end text-sm">
         <button
           type="button"
           onClick={onBack}

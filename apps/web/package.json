@@ -19,6 +19,7 @@
     "@piing/eslint-config": "workspace:*",
     "@piing/tsconfig": "workspace:*",
     "@piing/validation": "workspace:*",
+    "@piing/types": "workspace:*",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react-swc": "^4.2.2",
