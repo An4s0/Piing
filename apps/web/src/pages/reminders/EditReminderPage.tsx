@@ -20,6 +20,13 @@ export default function EditReminderPage() {
 
   const { token } = useAuth();
 
+  function toDatetimeLocal(value: string | Date) {
+    const d = new Date(value);
+    const offset = d.getTimezoneOffset() * 60000;
+    const local = new Date(d.getTime() - offset);
+    return local.toISOString().slice(0, 16);
+  }
+
   const update = (k: keyof typeof data) => (v: string) =>
     setData((p) => ({ ...p, [k]: v }));
 
@@ -42,9 +49,7 @@ export default function EditReminderPage() {
       setData({
         title: reminder.title,
         description: reminder.description ?? "",
-        scheduled_at: new Date(reminder.scheduled_at)
-          .toISOString()
-          .slice(0, 16),
+        scheduled_at: toDatetimeLocal(reminder.scheduled_at),
       });
     };
 
@@ -139,7 +144,7 @@ export default function EditReminderPage() {
           />
 
           <div className="space-y-1">
-            <label className="text-xs text-muted">Date & Time (UTC)</label>
+            <label className="text-xs text-muted">Date & Time</label>
             <Input
               value={data.scheduled_at}
               onChange={(e) => update("scheduled_at")(e.target.value)}

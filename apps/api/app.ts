@@ -14,9 +14,11 @@ import {
   RateLimiter,
   checkContentType,
 } from "./middlewares";
+import { startRemindersCron } from "./cron/reminders";
 
 const app = express();
 
+startRemindersCron();
 app.use(Logger);
 app.use(cors());
 app.use(express.json());

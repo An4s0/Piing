@@ -64,9 +64,7 @@ export default function NewReminderPage() {
           <h1 className="text-2xl font-semibold tracking-tight">
             New Reminder
           </h1>
-          <p className="text-sm text-subtle">
-            Create a new reminder. Date and time are in <b>UTC</b>.
-          </p>
+          <p className="text-sm text-subtle">Create a new reminder.</p>
         </div>
 
         <div className="mb-4 rounded-md border border-border bg-bg px-3 py-2 text-xs text-muted">
@@ -93,7 +91,7 @@ export default function NewReminderPage() {
           />
 
           <div className="space-y-1">
-            <label className="text-xs text-muted">Date & Time (UTC)</label>
+            <label className="text-xs text-muted">Date & Time</label>
             <Input
               onChange={(e) => update("scheduled_at")(e.target.value)}
               type="datetime-local"

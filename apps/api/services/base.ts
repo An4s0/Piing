@@ -8,7 +8,7 @@ export abstract class BaseService<T extends { id: string }> {
     this.table = table;
   }
 
-  private async init() {
+  public async init() {
     await initTable(this.table);
   }
 

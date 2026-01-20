@@ -18,4 +18,9 @@ export const ReminderErrors = {
     message: "Failed to delete reminder.",
     statusCode: 500,
   },
+
+  CRON_REMINDERS_ERROR: {
+    message: "Failed to process reminder cron job.",
+    statusCode: 500,
+  },
 } as const;
