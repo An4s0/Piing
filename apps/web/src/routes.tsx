@@ -14,6 +14,9 @@ export default function AppRoutes() {
   const NewReminderPage = React.lazy(
     () => import("./pages/reminders/NewReminderPage"),
   );
+  const EditReminderPage = React.lazy(
+    () => import("./pages/reminders/EditReminderPage"),
+  );
   const SignUpPage = React.lazy(() => import("./pages/auth/SignUpPage"));
   const SignInPage = React.lazy(() => import("./pages/auth/SignInPage"));
 
@@ -34,6 +37,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <NewReminderPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reminders/:id"
+          element={
+            <ProtectedRoute>
+              <EditReminderPage />
             </ProtectedRoute>
           }
         />

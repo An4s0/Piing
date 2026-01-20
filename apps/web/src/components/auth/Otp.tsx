@@ -4,6 +4,7 @@ import { Button } from "@/components/ui";
 import { auth } from "@/utils/auth";
 import { cookies } from "@/utils/cookies";
 import { storageUser } from "@/utils/storage";
+import { useNavigate } from "react-router-dom";
 
 const OTP_LENGTH = 6;
 
@@ -19,6 +20,7 @@ export function OTP({
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState<string | null>(null);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const navigate = useNavigate();
 
   const focus = (i: number) =>
     refs.current[Math.max(0, Math.min(i, OTP_LENGTH - 1))]?.focus();
@@ -105,7 +107,7 @@ export function OTP({
 
     storageUser.set(result.data.user);
     cookies.set("token", result.data.token);
-    window.location.href = "/";
+    navigate("/");
   }
 
   const complete = otp.every(Boolean);

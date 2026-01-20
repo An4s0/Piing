@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MainLayout } from "@/components/layouts";
 import { Input, Button, Textarea } from "@/components/ui";
-import { createReminderSchema } from "@piing/validation";
+import { updateReminderSchema } from "@piing/validation";
 import { reminders } from "@/utils/reminders";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import type { IReminder } from "@piing/types";
 
-export default function NewReminderPage() {
+export default function EditReminderPage() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
   const [data, setData] = useState({
     title: "",
@@ -21,22 +23,49 @@ export default function NewReminderPage() {
   const update = (k: keyof typeof data) => (v: string) =>
     setData((p) => ({ ...p, [k]: v }));
 
+  useEffect(() => {
+    if (!id || !token) return;
+
+    const load = async () => {
+      const res = await reminders.get(token);
+      if (res.error) {
+        setError(res.error.message);
+        return;
+      }
+
+      const reminder = res.data?.reminders.find((r: IReminder) => r.id === id);
+      if (!reminder) {
+        setError("Reminder not found");
+        return;
+      }
+
+      setData({
+        title: reminder.title,
+        description: reminder.description ?? "",
+        scheduled_at: new Date(reminder.scheduled_at)
+          .toISOString()
+          .slice(0, 16),
+      });
+    };
+
+    load();
+  }, [id, token]);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
-    if (!data.scheduled_at) {
-      setError("Date and time are required");
-      return;
-    }
+    if (!id) return;
 
-    // local datetime to UTC ISO
     const payload = {
-      ...data,
-      scheduled_at: new Date(data.scheduled_at).toISOString(),
+      title: data.title || undefined,
+      description: data.description || undefined,
+      scheduled_at: data.scheduled_at
+        ? new Date(data.scheduled_at).toISOString()
+        : undefined,
     };
 
-    const validationResult = createReminderSchema.safeParse(payload);
+    const validationResult = updateReminderSchema.safeParse(payload);
     if (!validationResult.success) {
       const flat = validationResult.error.flatten();
       setError(
@@ -47,7 +76,24 @@ export default function NewReminderPage() {
       return;
     }
 
-    const result = await reminders.create(payload, token as string);
+    const normalizedData = {
+      ...(validationResult.data.title !== undefined && {
+        title: validationResult.data.title,
+      }),
+
+      ...(validationResult.data.description !== undefined && {
+        description: validationResult.data.description ?? undefined,
+      }),
+
+      ...(validationResult.data.scheduled_at !== undefined && {
+        scheduled_at:
+          validationResult.data.scheduled_at instanceof Date
+            ? validationResult.data.scheduled_at.toISOString()
+            : validationResult.data.scheduled_at,
+      }),
+    };
+
+    const result = await reminders.update(id, normalizedData, token as string);
 
     if (!result.success) {
       setError(result.error.message);
@@ -62,11 +108,9 @@ export default function NewReminderPage() {
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="space-y-1 mb-6">
           <h1 className="text-2xl font-semibold tracking-tight">
-            New Reminder
+            Edit Reminder
           </h1>
-          <p className="text-sm text-subtle">
-            Create a new reminder. Date and time are in <b>UTC</b>.
-          </p>
+          <p className="text-sm text-subtle">Update your reminder details.</p>
         </div>
 
         <div className="mb-4 rounded-md border border-border bg-bg px-3 py-2 text-xs text-muted">
@@ -82,11 +126,13 @@ export default function NewReminderPage() {
           {error && <p className="text-sm text-danger">{error}</p>}
 
           <Input
+            value={data.title}
             onChange={(e) => update("title")(e.target.value)}
             placeholder="Reminder title"
           />
 
           <Textarea
+            value={data.description}
             onChange={(e) => update("description")(e.target.value)}
             placeholder="Description (optional)"
             rows={3}
@@ -95,13 +141,14 @@ export default function NewReminderPage() {
           <div className="space-y-1">
             <label className="text-xs text-muted">Date & Time (UTC)</label>
             <Input
+              value={data.scheduled_at}
               onChange={(e) => update("scheduled_at")(e.target.value)}
               type="datetime-local"
             />
           </div>
 
           <Button type="submit" className="w-full">
-            Create Reminder
+            Save Changes
           </Button>
         </form>
       </div>

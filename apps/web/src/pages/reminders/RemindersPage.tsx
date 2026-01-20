@@ -33,6 +33,26 @@ export default function RemindersPage() {
 
   const hasReminders = REMINDERS.length > 0;
 
+  async function fetchRemindersAgain() {
+    if (!token) return;
+    const response = await reminders.get(token);
+    if (!response.error) {
+      setREMINDERS(response.data?.reminders ?? []);
+    }
+  }
+
+  async function remove(reminderId: string) {
+    if (!token) return;
+
+    setREMINDERS((prev) => prev.filter((r) => r.id !== reminderId));
+
+    const response = await reminders.delete(reminderId, token);
+
+    if (response.error) {
+      await fetchRemindersAgain();
+    }
+  }
+
   return (
     <MainLayout className="space-y-8">
       <div className="flex items-center justify-between">
@@ -56,7 +76,7 @@ export default function RemindersPage() {
           <h2 className="text-lg font-semibold">Upcoming</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {upcoming.map((r) => (
-              <ReminderCard reminder={r} key={r.id} />
+              <ReminderCard key={r.id} reminder={r} onDelete={remove} />
             ))}
           </div>
         </section>
@@ -67,7 +87,7 @@ export default function RemindersPage() {
           <h2 className="text-lg font-semibold text-subtle">Past</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {past.map((r) => (
-              <ReminderCard reminder={r} key={r.id} isPast />
+              <ReminderCard reminder={r} key={r.id} onDelete={remove} isPast />
             ))}
           </div>
         </section>
@@ -91,9 +111,11 @@ export default function RemindersPage() {
 function ReminderCard({
   reminder,
   isPast = false,
+  onDelete,
 }: {
   reminder: IReminder;
   isPast?: boolean;
+  onDelete: (id: string) => void;
 }) {
   function formatScheduledAt(value: string | Date) {
     const d = new Date(value);
@@ -153,10 +175,11 @@ function ReminderCard({
           </Link>
         )}
         <button
-          className={`rounded-lg px-3 py-2 bg-bgltr text-xs font-medium hover:text-danger ${
+          className={`rounded-lg px-3 py-2 bg-bgltr text-xs font-medium hover:text-danger cursor-pointer ${
             isPast ? "flex-1 flex justify-center" : ""
           }`}
           aria-label="Delete"
+          onClick={() => onDelete(reminder.id)}
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>
